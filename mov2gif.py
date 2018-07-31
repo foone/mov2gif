@@ -5,11 +5,11 @@ def ffmpeg(movie,*args):
 	subprocess.check_call(cmd)
 
 #filters="fps=$3,scale=$4:-1:flags=lanczos"
-def convertWithWidth(movie,output,width):
+def convertWithWidth(movie,output,width,colors=256):
 	filters="scale={0}:-1:flags=lanczos,eq=gamma={1}".format(width,gamma)
 	palette_file = 'temp_palette.png'
-	ffmpeg(movie,'-vf',filters+',palettegen','-y',palette_file)
-	ffmpeg(movie,'-i',palette_file,'-lavfi',filters+' [x]; [x][1:v] paletteuse','-y',output)
+	ffmpeg(movie,'-vf',filters+',palettegen=max_colors={}'.format(colors),'-y',palette_file)
+	ffmpeg(movie,'-i',palette_file,'-lavfi',filters+' [x]; [x][1:v] paletteuse=dither=none, fps=12','-y',output)
 	os.unlink(palette_file)
 	return os.path.getsize(output)//1024
 
@@ -37,6 +37,7 @@ target_size = 15000
 SITES={
 	'twitter': 15000,
 	'tumblr':3000,
+	'sms':2000,
 }
 
 gamma = 1.1
@@ -47,6 +48,10 @@ parser.add_argument('movies', metavar='FILE', type=str, nargs='+',
 parser.add_argument('--target', dest='target', action='store',
                     default='twitter',
                     help='File size in kilobytes to target (or a site name)')
+
+parser.add_argument('-c','--colors', dest='colors', action='store',
+                    default=256,type=int,
+                    help='Max colors to use in GIF (256 is max!)')
 
 args = parser.parse_args()
 if platform.system() == 'Windows':
@@ -64,7 +69,7 @@ for infile in args.movies:
 	for width in WIDTHS:
 		if width>orig_width:
 			continue
-		size=convertWithWidth(infile,output_file,width)
+		size=convertWithWidth(infile,output_file,width, args.colors)
 		if size<target_size:
 			print 'Got it at {}kb with width of {}'.format(size,width)
 			found=True
