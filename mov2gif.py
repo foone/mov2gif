@@ -1,7 +1,7 @@
 import argparse,subprocess,sys,os,json,glob,platform
 
 def ffmpeg(movie,*args):
-	cmd=['ffmpeg','-v','warning','-i',movie]+[str(x) for x in args]
+	cmd=['ffmpeg','-v','error','-i',movie]+[str(x) for x in args]
 	subprocess.check_call(cmd)
 
 def gifsicle(infile, outfile, *args):
@@ -70,7 +70,7 @@ def replaceWithGlobs(args):
 WIDTHS=(1280,1024,960,800,720,640,600,550,500,450,400,350,320,300,250,200,150,100,75,50)
 
 SITES={
-	'twitter': 15000, # TODO: test if this is really 15*1024 instead
+	'twitter': 15*1024, # twitter knows what a megabyte is!
 	'tumblr':3000, # TODO: test if this is really 3*1024 instead
 	'reddit':99999, # I have no idea what the limit actaully is.
 	'sms': 2000 # this is specifically MightyText, other SMS platforms naturally have other limits
