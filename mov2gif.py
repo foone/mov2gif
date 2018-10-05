@@ -71,6 +71,7 @@ WIDTHS=(1280,1024,960,800,720,640,600,550,500,450,400,350,320,300,250,200,150,10
 
 SITES={
 	'twitter': 15*1024, # twitter knows what a megabyte is!
+	'mobile-twitter': 5*1024, # WHY IS MOBILE DIFFERENT?
 	'tumblr':3000, # TODO: test if this is really 3*1024 instead
 	'reddit':99999, # I have no idea what the limit actaully is.
 	'sms': 2000 # this is specifically MightyText, other SMS platforms naturally have other limits
